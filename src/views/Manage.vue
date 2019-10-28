@@ -1,12 +1,32 @@
 <template>
-  <v-container class="profilepage">
+  <v-container class="managepage">
     <v-row no-gutters>
       <div class="card">
         <v-row>
-          <v-col cols="12" sm="12" md="12" xs="12">
-            <Sell />
+          <v-col cols="12" sm="10" md="11" xs="12" lg="12">
+            <v-card class="sell-card">
+              <Sell :changeViewItem="changeViewItem" />
+            </v-card>
           </v-col>
-          <v-col cols="12" sm="7" md="6" xs="12"></v-col>
+          <v-col cols="12" sm="10" md="11" xs="12" lg="12">
+            <AssetCard :chosenData="chosenData" />
+          </v-col>
+          <v-col cols="12" sm="10" md="11" xs="12" lg="12">
+            <v-card-title id="#my-transactions" class="black--text">
+              My Transactions
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    size="20"
+                    class="ml-2 black--text"
+                    v-on="on"
+                  >help_outline</v-icon>
+                </template>
+                <span>Transaction history shows the last 5 transactions made</span>
+              </v-tooltip>
+            </v-card-title>
+            <TransactionHistoryCard :history="myHistoryData" />
+          </v-col>
         </v-row>
       </div>
     </v-row>
@@ -16,35 +36,56 @@
 
 <script>
   import Sell from "../components/manage/Sell";
+  import AssetCard from "../components/manage/AssetCard";
+  import { getProductsForSpecificUser } from "../actions/product";
+  import TransactionHistoryCard from "../components/TransactionHistoryCard";
+  import { getSpecificUsersTransactions } from "../actions/history";
 
   export default {
     components: {
-      Sell
+      Sell,
+      AssetCard,
+      TransactionHistoryCard
     },
     data: () => {
       return {
-        user: {
-          firstName: "John",
-          lastName: "Doe",
-          birthday: "2019-10-02",
-          email: "JohnDoe@gmail.com"
+        sorted: {
+          title: { sort: false, icon: "arrow_upward" },
+          amount: { sort: false, icon: "arrow_upward" }
         },
-        open: false
+        open: false,
+        stock: [],
+        myHistoryData: [],
+        chosenData: ""
       };
+    },
+    beforeMount() {
+      let ownerId = JSON.parse(localStorage.getItem("activeUser"))["email"];
+
+      getProductsForSpecificUser(ownerId).then(res => {
+        this.stock = res;
+      });
+
+      getSpecificUsersTransactions(ownerId).then(res => {
+        this.myHistoryData = res;
+      });
+    },
+    methods: {
+      changeViewItem(item) {
+        this.chosenData = item;
+      }
     }
   };
 </script>
 
 <style scoped>
-  .profilepage {
+  .managepage {
     display: flex;
-    height: 95vh;
     flex-direction: column;
   }
 
   .card {
     width: 100%;
-    height: 95vh;
     padding: 1em;
     border-radius: 0;
   }

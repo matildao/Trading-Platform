@@ -1,7 +1,7 @@
 <template>
   <v-card color="white darken-3" class="selling-card">
-    <v-divider></v-divider>
-    <v-simple-table>
+    <v-divider />
+    <v-simple-table class="sell-table">
       <template v-slot:default>
         <thead>
           <tr>
@@ -10,38 +10,27 @@
               Item
               <v-icon size="12" class="open-icon">{{sorted.title.icon}}</v-icon>
             </th>
-            <th class="text-left sort-button" @click="sortAscDesc('amount')">
-              Stock
-              <v-icon size="12" class="open-icon">{{sorted.amount.icon}}</v-icon>
-            </th>
             <th class="text-left">Price</th>
-            <th class="text-left">Open</th>
+            <th class="text-left">rate</th>
+            <th class="text-left">variance</th>
           </tr>
         </thead>
         <tbody>
           <tr
-            v-for="item in stock"
-            :key="item.title"
-            @click="test(item.title)"
+            v-for="(item, i) in stock"
+            :key="i"
+            @click="changeItem(item)"
             class="table-row"
           >
             <td>
-              <img :src="getImage(item.imgurl)" class="table-image" />
+              <img src="../../assets/poketrade_purple.png" class="table-image" />
             </td>
             <td>{{ item.title }}</td>
             <td>
-              <div class="money">{{ item.amount }}</div>
+              <div class="money">${{ item.startingPrice }}</div>
             </td>
-            <td>
-              <div class="money">${{ item.price }}</div>
-            </td>
-            <td>
-              <v-icon
-                :color="getOpenClass(item.open)"
-                size="12"
-                class="open-icon"
-              >fiber_manual_recorder</v-icon>
-            </td>
+            <td>{{ item.rate }}</td>
+            <td>{{ item.variance }}</td>
           </tr>
         </tbody>
       </template>
@@ -51,54 +40,24 @@
 
 <script>
   export default {
-    props: ["changeViewItem"],
+    props: ["changeViewItem", "stock"],
     data: () => {
       return {
         sorted: {
           title: { sort: false, icon: "arrow_upward" },
           amount: { sort: false, icon: "arrow_upward" }
-        },
-        stock: [
-          {
-            owner: "email@gmail.com",
-            title: "Pikachu",
-            imgurl: "poketrade_purple.png",
-            amount: 7,
-            price: 100,
-            open: true
-          },
-          {
-            owner: "email2@gmail.com",
-            title: "Bulbasaur",
-            imgurl: "poketrade_purple.png",
-            amount: 10,
-            price: 100,
-            open: false
-          },
-          {
-            owner: "email2@gmail.com",
-            title: "Raichu",
-            imgurl: "poketrade_purple.png",
-            amount: 11,
-            price: 50,
-            open: true
-          }
-        ]
+        }
       };
     },
     methods: {
-      test(item) {
+      changeItem(item) {
         this.changeViewItem(item);
       },
-      getOpenClass(order) {
-        let openClass = "";
-
-        if (order) {
-          openClass = "green";
-        } else {
-          openClass = "red";
-        }
-        return openClass;
+      getOwner(item) {
+        return item.ownerId ===
+          JSON.parse(localStorage.getItem("activeUser"))["email"]
+          ? "You"
+          : item.ownerId;
       },
       getImage(url) {
         return `/assets/${url}`;
@@ -131,7 +90,7 @@
 <style scoped>
   .selling-card {
     width: 100%;
-    height: 50vh;
+    border-radius: 0;
     margin-bottom: 1em;
     margin-right: 1em !important;
     color: rgb(44, 44, 44);
@@ -146,7 +105,7 @@
   }
 
   .open-icon {
-    margin-left: 0.5em;
+    text-align: center;
   }
 
   .title-content {
@@ -171,5 +130,9 @@
     background-color: rgb(212, 212, 212);
     border-radius: 4px;
     text-align: center;
+  }
+
+  tr:nth-child(even) {
+    background-color: #eddff1;
   }
 </style>

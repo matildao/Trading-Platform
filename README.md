@@ -1,3 +1,4 @@
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Maoo17/Trading-Platform/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Maoo17/Trading-Platform/?branch=master) [![Build Status](https://scrutinizer-ci.com/g/Maoo17/Trading-Platform/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Maoo17/Trading-Platform/build-status/master)
 <br>
 <br>
 <div style="text-align:center">

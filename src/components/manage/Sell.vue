@@ -1,104 +1,73 @@
 <template>
   <div>
-    <v-toolbar>
-      <v-checkbox class="checkbox" />
-      <v-toolbar-title>Manage Assets</v-toolbar-title>
-      <div class="flex-grow-1"></div>
-      <v-btn icon @click="open=true">
-        <v-icon>mdi-plus-circle</v-icon>
-      </v-btn>
+    <v-toolbar class="sell-toolbar">
+      <v-toolbar-title class="ml-2">Manage Assets</v-toolbar-title>
+      <div class="flex-grow-1" />
     </v-toolbar>
-    <v-expansion-panels accordion>
-      <v-expansion-panel v-for="(item,i) in stock" :key="i">
-        <v-expansion-panel-header class="expansion-header">
-          <v-checkbox class="checkbox" />
-          {{ item.title }}
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <v-row no-gutters>
-            <v-col cols="5">
-              <div class="item-information">
-                <div class="flex-grow-1">
-                  <b>Title:</b>
-                  {{item.title}}
-                </div>
-                <div class="flex-grow-1">
-                  <b>Price:</b>
-                  ${{item.price}}
-                </div>
-                <div class="flex-grow-1">
-                  <b>Stock:</b>
-                  {{item.amount}}
-                </div>
-              </div>
-            </v-col>
-            <div class="flex-grow-1"></div>
-
-            <v-divider vertical class="mx-4"></v-divider>
-
-            <v-col cols="3">
-              <div class="actions">
-                <v-btn class="flex-grow-1" text icon color="indigo lighten-1">
-                  <v-icon>create</v-icon>
-                </v-btn>
-                <v-btn class="flex-grow-1" text icon color="indigo lighten-1">
-                  <v-icon>delete</v-icon>
-                </v-btn>
-              </div>
-            </v-col>
-          </v-row>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-    <NewProductDialog :open="open" :closeDialog="onDialogClose" />
+    <v-simple-table class="sell-table">
+      <template v-slot:default>
+        <thead>
+          <tr>
+            <th class="text-left">Deposit Id</th>
+            <th class="text-left sort-button">Item</th>
+            <th class="text-left">Price</th>
+            <th class="text-left">rate</th>
+            <th class="text-left">variance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(item, i) in stock"
+            :key="i"
+            @click="changeItem(item)"
+            class="table-row"
+          >
+            <td>{{ item.depositId }}</td>
+            <td>{{ item.title }}</td>
+            <td>
+              <div>${{ item.startingPrice }}</div>
+            </td>
+            <td>{{ item.rate }}</td>
+            <td>{{ item.variance }}</td>
+          </tr>
+        </tbody>
+      </template>
+    </v-simple-table>
   </div>
 </template>
 
 <script>
-  import NewProductDialog from "../dialog/NewProductDialog";
+  import {
+    getAllProductsForSpecificUser,
+    getAllProducts
+  } from "../../actions/product";
 
   export default {
     props: ["changeViewItem"],
-    components: {
-      NewProductDialog
-    },
+    components: {},
     data: () => {
       return {
         sorted: {
           title: { sort: false, icon: "arrow_upward" },
           amount: { sort: false, icon: "arrow_upward" }
         },
-        open: false,
-        stock: [
-          {
-            owner: "email@gmail.com",
-            title: "Pikachu",
-            imgurl: "poketrade_purple.png",
-            amount: 7,
-            price: 100,
-            open: true
-          },
-          {
-            owner: "email2@gmail.com",
-            title: "Bulbasaur",
-            imgurl: "poketrade_purple.png",
-            amount: 10,
-            price: 100,
-            open: false
-          },
-          {
-            owner: "email2@gmail.com",
-            title: "Raichu",
-            imgurl: "poketrade_purple.png",
-            amount: 11,
-            price: 50,
-            open: true
-          }
-        ]
+        stock: [],
+        all: []
       };
     },
+    beforeMount() {
+      let ownerId = JSON.parse(localStorage.getItem("activeUser"))["email"];
+
+      getAllProducts().then(res => {
+        this.all = res;
+      });
+
+      getAllProductsForSpecificUser(ownerId).then(res => {
+        this.createListOfAssets(this.all, res);
+      });
+    },
     methods: {
-      test(item) {
+      changeItem(item) {
         this.changeViewItem(item);
       },
       getOpenClass(order) {
@@ -114,8 +83,14 @@
       getImage(url) {
         return `/assets/${url}`;
       },
-      onDialogClose() {
-        this.open = false;
+      createListOfAssets(products, userAssets) {
+        userAssets.forEach(asset => {
+          products.forEach(product => {
+            if (product.id === asset.productId) {
+              this.stock.push({ ...product, ...asset });
+            }
+          });
+        });
       }
     }
   };
@@ -139,7 +114,7 @@
   }
 
   .open-icon {
-    margin-left: 0.5em;
+    margin-left: 2.5em;
   }
 
   .title-content {
@@ -181,8 +156,19 @@
     padding-top: 0;
     padding-bottom: 0;
   }
+  .expansion {
+    border-radius: 0;
+  }
 
   .checkbox {
     padding-top: 0;
+  }
+
+  .sell-toolbar {
+    box-shadow: none;
+  }
+
+  tr:nth-child(even) {
+    background-color: #eddff1;
   }
 </style>

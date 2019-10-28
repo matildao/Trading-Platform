@@ -1,37 +1,72 @@
 <template>
-  <v-container class="dashboardpage">
-    <v-row no-gutters>
-      <v-card class="mx-auto card monitor">
-        <v-row>
-          <v-col cols="12" sm="12" md="9" xs="12">
-            <SellingCard :changeViewItem="changeViewItem" />
-          </v-col>
-          <v-col cols="12" sm="7" md="3" xs="12">
-            <AvailableCard :chosenData="chosenData" />
-          </v-col>
-        </v-row>
-      </v-card>
+  <div>
+    <v-container class="dashboardpage">
+      <v-row no-gutters>
+        <v-card-title id="dashboard-title" class="black--text">Dashboard</v-card-title>
+        <v-card class="mx-auto card monitor">
+          <v-row>
+            <v-col cols="12" sm="10" md="7" xs="12" lg="12">
+              <SellingCard
+                v-if="productData"
+                :stock="productData"
+                :changeViewItem="changeViewItem"
+              />
+            </v-col>
+            <v-col cols="12" sm="10" md="4" xs="12" lg="12" class="available">
+              <AvailableCard :chosenData="chosenData" />
+            </v-col>
+            <v-col cols="12" sm="10" md="11" xs="12" lg="12">
+              <div class="d-flex flex-row">
+                <v-card-title id="transactions" class="black--text">Transactions</v-card-title>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      size="20"
+                      class="mt-2 black--text"
+                      v-on="on"
+                    >help_outline</v-icon>
+                  </template>
+                  <span>Transaction history shows the last 5 transactions made</span>
+                </v-tooltip>
+              </div>
 
-      <v-card class="mx-auto card card-bottom">
-        <v-card-title>Monitor</v-card-title>
-      </v-card>
-    </v-row>
-  </v-container>
+              <TransactionHistoryCard :history="historyData" />
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script>
   import SellingCard from "../components/dashboard/SellingCard";
   import AvailableCard from "../components/dashboard/AvailableCard";
+  import TransactionHistoryCard from "../components/TransactionHistoryCard";
+  import { getAllProducts } from "../actions/product";
+  import { getAllTransactions } from "../actions/history";
 
   export default {
     components: {
       SellingCard,
-      AvailableCard
+      AvailableCard,
+      TransactionHistoryCard
     },
-    data: () => {
+    data() {
       return {
-        chosenData: ""
+        chosenData: "",
+        productData: [],
+        historyData: []
       };
+    },
+    beforeMount() {
+      getAllProducts().then(res => {
+        this.productData = res;
+      });
+
+      getAllTransactions().then(res => {
+        this.historyData = res;
+      });
     },
     methods: {
       changeViewItem(item) {
@@ -55,7 +90,7 @@
   }
 
   .card-bottom {
-    background-color: rgb(204, 204, 204);
+    background-color: rgb(124, 99, 172);
   }
 
   .card {
