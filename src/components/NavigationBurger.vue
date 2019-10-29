@@ -8,29 +8,39 @@
       <v-menu left bottom>
         <template v-slot:activator="{ on }">
           <v-btn icon v-on="on">
-            <v-app-bar-nav-icon></v-app-bar-nav-icon>
+            <v-app-bar-nav-icon color="black" />
           </v-btn>
         </template>
-
         <v-list>
-          <v-list-item v-for="n in 5" :key="n" @click="() => {}">
-            <v-list-item-title>Option {{ n }}</v-list-item-title>
+          <v-list-item
+            v-for="item in items"
+            :key="item.title"
+            @click="goToRoute(item.title)"
+          >
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
     </v-app-bar>
   </div>
 </template>
+
+
 <script>
   export default {
     data: () => ({
       items: [
-        { title: "Click Me" },
-        { title: "Click Me" },
-        { title: "Click Me" },
-        { title: "Click Me 2" }
+        { title: "Profile", icon: "person", link: "/profile" },
+        { title: "Prices", icon: "assessment", link: "/price" },
+        { title: "Dashboard", icon: "mdi-view-dashboard", link: "/dashboard" },
+        { title: "Manage", icon: "work", link: "/manage" }
       ]
-    })
+    }),
+    methods: {
+      goToRoute(where) {
+        this.$router.push("/" + where);
+      }
+    }
   };
 </script>
 
