@@ -5,19 +5,12 @@
         <v-card-title id="dashboard-title" class="black--text">Dashboard</v-card-title>
         <v-card class="mx-auto card monitor">
           <v-row>
-            <v-col cols="12" sm="10" md="7" xs="12" lg="12">
-              <SellingCard
-                v-if="productData"
-                :stock="productData"
-                :changeViewItem="changeViewItem"
-              />
-            </v-col>
-            <v-col cols="12" sm="10" md="4" xs="12" lg="12" class="available">
-              <AvailableCard :chosenData="chosenData" />
-            </v-col>
             <v-col cols="12" sm="10" md="11" xs="12" lg="12">
               <div class="d-flex flex-row">
-                <v-card-title id="transactions" class="black--text">Transactions</v-card-title>
+                <v-card-title
+                  id="transactions"
+                  class="black--text"
+                >Recent Transactions</v-card-title>
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-icon
@@ -31,6 +24,16 @@
               </div>
 
               <TransactionHistoryCard :history="historyData" />
+            </v-col>
+            <v-col cols="12" sm="10" md="7" xs="12" lg="12">
+              <SellingCard
+                v-if="productData"
+                :stock="productData"
+                :changeViewItem="changeViewItem"
+              />
+            </v-col>
+            <v-col cols="12" sm="10" md="4" xs="12" lg="12" class="available">
+              <AvailableCard :chosenData="chosenData" />
             </v-col>
           </v-row>
         </v-card>

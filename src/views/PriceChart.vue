@@ -38,7 +38,7 @@
 
         if (this.first) {
           const palette = new Rickshaw.Color.Palette({ scheme: "colorwheel" });
-
+          console.log(message);
           message.map(pokemon => {
             let graphTitle = document.createElement("h1");
             let graphElement = document.createElement("div");

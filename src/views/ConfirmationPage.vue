@@ -144,7 +144,8 @@
             title: this.chosenData.title,
             depositId: this.chosenData.depositId,
             balance: this.user.balance,
-            price: this.chosenData.startingPrice
+            price: this.chosenData.startingPrice,
+            productId: this.chosenData.productId
           };
 
           sellProduct(dataToSend).then(res => {

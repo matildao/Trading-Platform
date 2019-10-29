@@ -9,6 +9,7 @@
             <th class="text-left sort-button">Made By</th>
             <th class="text-left sort-button">Asset</th>
             <th class="text-left">Action</th>
+            <th class="text-left">At Price</th>
             <th class="text-left">Date</th>
           </tr>
         </thead>
@@ -22,6 +23,7 @@
             <td>{{ item.email }}</td>
             <td>{{ item.note }}</td>
             <td>{{ item.type }}</td>
+            <td>{{ item.price.replace('-', '')}}</td>
             <td>{{ getCorrectTime(item.occurred) }}</td>
           </tr>
         </tbody>

@@ -20,6 +20,6 @@ describe('Dashboard', function () {
     it('has heading transactions on dashboard page', () => {
         let title = wrapper.find('#transactions')
 
-        expect(title.text()).toBe("Transactions");
+        expect(title.text()).toBe("Recent Transactions");
     });
 });
